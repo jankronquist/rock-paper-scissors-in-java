@@ -20,8 +20,8 @@ public class GameIntegrationTest {
 	InMemoryEventStore eventStore = new InMemoryEventStore();
 	ApplicationService application = new ApplicationService(eventStore, Game.class);
 	UUID gameId = UUID.randomUUID();
-	UUID player1 = UUID.randomUUID();
-	UUID player2 = UUID.randomUUID();
+	String player1 = UUID.randomUUID().toString();
+	String player2 = UUID.randomUUID().toString();
 
 	@Test
 	public void tie() throws Exception {

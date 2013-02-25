@@ -6,10 +6,10 @@ import com.jayway.es.api.Event;
 
 public class GameCreatedEvent implements Event {
 	public final UUID gameId;
-	public final UUID playerId;
+	public final String playerEmail;
 	
-	public GameCreatedEvent(UUID gameId, UUID playerId) {
+	public GameCreatedEvent(UUID gameId, String playerEmail) {
 		this.gameId = gameId;
-		this.playerId = playerId;
+		this.playerEmail = playerEmail;
 	}
 }

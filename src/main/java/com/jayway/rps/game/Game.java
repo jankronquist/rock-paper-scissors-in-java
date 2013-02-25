@@ -18,30 +18,30 @@ public class Game {
 		notStarted, created, tied, won
 	}
 	private State state = State.notStarted;
-	private UUID creatorId;
+	private String creatorEmail;
 	private Move move;
 
 	public List<? extends Event> handle(CreateGameCommand c) {
 		if (state != State.notStarted) throw new IllegalStateException(state.toString());
 		return Arrays.asList(
-				new GameCreatedEvent(c.gameId, c.playerId), 
-				new MoveDecidedEvent(c.gameId, c.playerId, c.move));
+				new GameCreatedEvent(c.gameId, c.playerEmail), 
+				new MoveDecidedEvent(c.gameId, c.playerEmail, c.move));
 	}
 
 	public List<? extends Event> handle(MakeMoveCommand c) {
 		if (State.created != state) throw new IllegalStateException(state.toString());
-		if (creatorId.equals(c.playerId)) throw new IllegalArgumentException("Player already in game");
+		if (creatorEmail.equals(c.playerEmail)) throw new IllegalArgumentException("Player already in game");
 		
 		return Arrays.asList(
-				new MoveDecidedEvent(c.gameId, c.playerId, c.move),
-				makeEndGameEvent(c.gameId, c.playerId, c.move));
+				new MoveDecidedEvent(c.gameId, c.playerEmail, c.move),
+				makeEndGameEvent(c.gameId, c.playerEmail, c.move));
 	}
 
-	private Event makeEndGameEvent(UUID gameId, UUID opponentId, Move opponentMove) {
+	private Event makeEndGameEvent(UUID gameId, String opponentEmail, Move opponentMove) {
 		if (move.defeats(opponentMove)) {
-			return new GameWonEvent(gameId, creatorId, opponentId);
+			return new GameWonEvent(gameId, creatorEmail, opponentEmail);
 		} else if (opponentMove.defeats(move)) {
-			return new GameWonEvent(gameId, opponentId, creatorId);
+			return new GameWonEvent(gameId, opponentEmail, creatorEmail);
 		} else {
 			return new GameTiedEvent(gameId);
 		}
@@ -49,7 +49,7 @@ public class Game {
 
 	public void handle(GameCreatedEvent e) {
 		state = State.created;
-		creatorId = e.playerId;
+		creatorEmail = e.playerEmail;
 	}
 	
 	public void handle(MoveDecidedEvent e) {

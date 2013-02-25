@@ -6,12 +6,12 @@ import com.jayway.es.api.Event;
 
 public class GameWonEvent implements Event {
 	public final UUID gameId;
-	public final UUID winnerId;
-	public final UUID loserId;
+	public final String winnerEmail;
+	public final String loserEmail;
 
-	public GameWonEvent(UUID gameId, UUID winnerId, UUID loserId) {
+	public GameWonEvent(UUID gameId, String winnerEmail, String loserEmail) {
 		this.gameId = gameId;
-		this.winnerId = winnerId;
-		this.loserId = loserId;
+		this.winnerEmail = winnerEmail;
+		this.loserEmail = loserEmail;
 	}
 }
