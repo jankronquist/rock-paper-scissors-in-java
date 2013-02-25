@@ -20,14 +20,14 @@ public class ApplicationService {
 	}
 	
 	public void handle(Command command) throws Exception {
-		EventStream<Long> eventStream = eventStore.loadEventStream(command.entityId());
+		EventStream<Long> eventStream = eventStore.loadEventStream(command.aggregateId());
 		Object target = commandHandlerLookup.targetType(command).newInstance();
 		for (Event event : eventStream) {
 			handle(target, event);
 		}
 		List<Event> events = handle(target, command);
 		if (events != null && events.size() > 0) {
-			eventStore.store(command.entityId(), eventStream.version(), events);
+			eventStore.store(command.aggregateId(), eventStream.version(), events);
 		} else {
 			// Command generated no events
 		}

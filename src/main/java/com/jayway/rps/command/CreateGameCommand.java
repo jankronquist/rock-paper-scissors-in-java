@@ -17,7 +17,7 @@ public class CreateGameCommand implements Command {
 	}
 
 	@Override
-	public UUID entityId() {
+	public UUID aggregateId() {
 		return gameId;
 	}
 	

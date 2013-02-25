@@ -19,22 +19,22 @@ public class InMemoryEventStore implements EventStore<Long> {
 	private final TreeSet<Transaction> transactions = new TreeSet<Transaction>();
 
 	@Override
-	public InMemoryEventStream loadEventStream(UUID streamId) {
-		InMemoryEventStream eventStream = streams.get(streamId);
+	public InMemoryEventStream loadEventStream(UUID aggregateId) {
+		InMemoryEventStream eventStream = streams.get(aggregateId);
 		if (eventStream == null) {
 			eventStream = new InMemoryEventStream();
-			streams.put(streamId, eventStream);
+			streams.put(aggregateId, eventStream);
 		}
 		return eventStream;
 	}
 
 	@Override
-	public void store(UUID streamId, long version, List<? extends Event> events) {
-		InMemoryEventStream stream = loadEventStream(streamId);
+	public void store(UUID aggregateId, long version, List<? extends Event> events) {
+		InMemoryEventStream stream = loadEventStream(aggregateId);
 		if (stream.version() != version) {
 			throw new ConcurrentModificationException("Stream has already been modified");
 		}
-		streams.put(streamId, stream.append(events));
+		streams.put(aggregateId, stream.append(events));
 		synchronized (transactions) {
 			transactions.add(new Transaction(events));
 		}
