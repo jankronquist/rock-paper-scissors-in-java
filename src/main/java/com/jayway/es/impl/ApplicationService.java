@@ -20,7 +20,7 @@ public class ApplicationService {
 	}
 	
 	public void handle(Command command) throws Exception {
-		EventStream<Long> eventStream = eventStore.loadEventStream(command.aggregateId());
+		EventStream eventStream = eventStore.loadEventStream(command.aggregateId());
 		Object target = newAggregateInstance(command);
 		for (Event event : eventStream) {
 			handle(target, event);

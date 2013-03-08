@@ -56,7 +56,7 @@ public class GameIntegrationTest {
 	}
 
 	private void assertEventStreamContains(UUID streamId, Event expectedEvent) {
-		EventStream<Long> eventStream = eventStore.loadEventStream(gameId);
+		EventStream eventStream = eventStore.loadEventStream(gameId);
 		String expected = EventStringUtil.toString(expectedEvent);
 		for (Event event : eventStream) {
 			if (EventStringUtil.toString(event).equals(expected)) return;
