@@ -21,7 +21,7 @@ public class ApplicationService {
 	
 	public void handle(Command command) throws Exception {
 		EventStream<Long> eventStream = eventStore.loadEventStream(command.aggregateId());
-		Object target = commandHandlerLookup.targetType(command).newInstance();
+		Object target = newAggregateInstance(command);
 		for (Event event : eventStream) {
 			handle(target, event);
 		}
@@ -31,6 +31,10 @@ public class ApplicationService {
 		} else {
 			// Command generated no events
 		}
+	}
+
+	private Object newAggregateInstance(Command command) throws InstantiationException, IllegalAccessException {
+		return commandHandlerLookup.targetType(command).newInstance();
 	}
 
 	@SuppressWarnings("unchecked")
