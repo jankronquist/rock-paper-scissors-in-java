@@ -15,33 +15,36 @@ import com.jayway.rps.event.MoveDecidedEvent;
 
 public class Game {
 	enum State {
-		notStarted, created, tied, won
+		notInitalized, created, waiting, tied, won
 	}
-	private State state = State.notStarted;
-	private String creatorEmail;
+	private State state = State.notInitalized;
+	private String player;
 	private Move move;
 
-	public List<? extends Event> handle(CreateGameCommand c) {
-		if (state != State.notStarted) throw new IllegalStateException(state.toString());
+	public List<Event> handle(CreateGameCommand c) {
+		if (state != State.notInitalized) throw new IllegalStateException(state.toString());
 		return Arrays.asList(
-				new GameCreatedEvent(c.gameId, c.playerEmail), 
-				new MoveDecidedEvent(c.gameId, c.playerEmail, c.move));
+				new GameCreatedEvent(c.gameId, c.playerEmail));
 	}
 
-	public List<? extends Event> handle(MakeMoveCommand c) {
-		if (State.created != state) throw new IllegalStateException(state.toString());
-		if (creatorEmail.equals(c.playerEmail)) throw new IllegalArgumentException("Player already in game");
-		
-		return Arrays.asList(
-				new MoveDecidedEvent(c.gameId, c.playerEmail, c.move),
-				makeEndGameEvent(c.gameId, c.playerEmail, c.move));
+	public List<Event> handle(MakeMoveCommand c) {
+		if (State.created == state) {
+			return Arrays.asList(new MoveDecidedEvent(c.gameId, c.playerEmail, c.move));
+		} else if (State.waiting == state) {
+			if (player.equals(c.playerEmail)) throw new IllegalArgumentException("Player already in game");
+			return Arrays.asList(
+					new MoveDecidedEvent(c.gameId, c.playerEmail, c.move),
+					makeEndGameEvent(c.gameId, c.playerEmail, c.move));
+		} else {
+			throw new IllegalStateException(state.toString());
+		}
 	}
 
 	private Event makeEndGameEvent(UUID gameId, String opponentEmail, Move opponentMove) {
 		if (move.defeats(opponentMove)) {
-			return new GameWonEvent(gameId, creatorEmail, opponentEmail);
+			return new GameWonEvent(gameId, player, opponentEmail);
 		} else if (opponentMove.defeats(move)) {
-			return new GameWonEvent(gameId, opponentEmail, creatorEmail);
+			return new GameWonEvent(gameId, opponentEmail, player);
 		} else {
 			return new GameTiedEvent(gameId);
 		}
@@ -49,11 +52,14 @@ public class Game {
 
 	public void handle(GameCreatedEvent e) {
 		state = State.created;
-		creatorEmail = e.playerEmail;
 	}
 	
 	public void handle(MoveDecidedEvent e) {
-		move = e.move;
+		if (state == State.created) {
+			move = e.move;
+			player = e.playerEmail;
+			state = State.waiting;
+		}
 	}
 
 	public void handle(GameWonEvent e) {

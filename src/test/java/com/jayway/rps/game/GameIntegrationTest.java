@@ -25,21 +25,24 @@ public class GameIntegrationTest {
 
 	@Test
 	public void tie() throws Exception {
-		application.handle(new CreateGameCommand(gameId, player1, Move.rock));
+		application.handle(new CreateGameCommand(gameId, player1));
+		application.handle(new MakeMoveCommand(gameId, player1, Move.rock));
 		application.handle(new MakeMoveCommand(gameId, player2, Move.rock));
 		assertEventStreamContains(gameId, new GameTiedEvent(gameId));
 	}
 
 	@Test
 	public void victory() throws Exception {
-		application.handle(new CreateGameCommand(gameId, player1, Move.rock));
+		application.handle(new CreateGameCommand(gameId, player1));
+		application.handle(new MakeMoveCommand(gameId, player1, Move.rock));
 		application.handle(new MakeMoveCommand(gameId, player2, Move.paper));
 		assertEventStreamContains(gameId, new GameWonEvent(gameId, player2, player1));
 	}
 
 	@Test(expected=IllegalArgumentException.class)
 	public void same_player_should_fail() throws Exception {
-		application.handle(new CreateGameCommand(gameId, player1, Move.rock));
+		application.handle(new CreateGameCommand(gameId, player1));
+		application.handle(new MakeMoveCommand(gameId, player1, Move.rock));
 		application.handle(new MakeMoveCommand(gameId, player1, Move.rock));
 	}
 
@@ -50,9 +53,10 @@ public class GameIntegrationTest {
 
 	@Test(expected=IllegalStateException.class)
 	public void move_after_end_should_fail() throws Exception {
-		application.handle(new CreateGameCommand(gameId, player1, Move.rock));
+		application.handle(new CreateGameCommand(gameId, player1));
+		application.handle(new MakeMoveCommand(gameId, player1, Move.rock));
 		application.handle(new MakeMoveCommand(gameId, player2, Move.rock));
-		application.handle(new MakeMoveCommand(gameId, player2, Move.rock));
+		application.handle(new MakeMoveCommand(gameId, "another", Move.rock));
 	}
 
 	private void assertEventStreamContains(UUID streamId, Event expectedEvent) {
