@@ -1,0 +1,27 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'war'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+configurations {
+    providedRuntime
+}
+
+// remove unnecessary transitive dependencies (eg tomcat)
+dependencies {
+	compile 'com.fasterxml.jackson.core:jackson-databind:2.5.1'
+	compile 'com.geteventstore:eventstore-client_2.11:2.0.0'
+	compile 'com.netflix.hystrix:hystrix-core:1.4.0'
+  testCompile("junit:junit-dep:4.11")
+}
+
+eclipse {
+	classpath {
+		defaultOutputDir = file('build/eclipse')
+	}
+}
