@@ -1,4 +1,4 @@
-package com.jayway.rps;
+package com.jayway.rps.domain;
 
 public enum Move {
 	rock, paper, scissor;

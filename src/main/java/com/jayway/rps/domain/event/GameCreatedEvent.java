@@ -1,4 +1,4 @@
-package com.jayway.rps.event;
+package com.jayway.rps.domain.event;
 
 import com.jayway.es.api.Event;
 

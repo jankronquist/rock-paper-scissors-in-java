@@ -1,9 +1,9 @@
-package com.jayway.rps.event;
+package com.jayway.rps.domain.event;
 
 import java.util.UUID;
 
 import com.jayway.es.api.Event;
-import com.jayway.rps.Move;
+import com.jayway.rps.domain.Move;
 
 public class MoveDecidedEvent implements Event {
 
@@ -15,6 +15,12 @@ public class MoveDecidedEvent implements Event {
 		this.gameId = gameId;
 		this.playerEmail = playerEmail;
 		this.move = move;
+	}
+	
+	public MoveDecidedEvent() {
+		gameId = null;
+		playerEmail = null;
+		move = null;
 	}
 
 }

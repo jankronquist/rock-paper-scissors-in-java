@@ -1,17 +1,17 @@
-package com.jayway.rps.game;
+package com.jayway.rps.domain.game;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
 import com.jayway.es.api.Event;
-import com.jayway.rps.Move;
-import com.jayway.rps.command.CreateGameCommand;
-import com.jayway.rps.command.MakeMoveCommand;
-import com.jayway.rps.event.GameCreatedEvent;
-import com.jayway.rps.event.GameTiedEvent;
-import com.jayway.rps.event.GameWonEvent;
-import com.jayway.rps.event.MoveDecidedEvent;
+import com.jayway.rps.domain.Move;
+import com.jayway.rps.domain.command.CreateGameCommand;
+import com.jayway.rps.domain.command.MakeMoveCommand;
+import com.jayway.rps.domain.event.GameCreatedEvent;
+import com.jayway.rps.domain.event.GameTiedEvent;
+import com.jayway.rps.domain.event.GameWonEvent;
+import com.jayway.rps.domain.event.MoveDecidedEvent;
 
 public class Game {
 	enum State {

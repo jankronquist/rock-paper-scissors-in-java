@@ -1,4 +1,4 @@
-package com.jayway.rps.event;
+package com.jayway.rps.domain.event;
 
 import java.util.UUID;
 
@@ -13,5 +13,11 @@ public class GameWonEvent implements Event {
 		this.gameId = gameId;
 		this.winnerEmail = winnerEmail;
 		this.loserEmail = loserEmail;
+	}
+	
+	public GameWonEvent() {
+		gameId = null;
+		winnerEmail = null;
+		loserEmail = null;
 	}
 }

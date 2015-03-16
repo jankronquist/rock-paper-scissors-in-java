@@ -14,10 +14,26 @@ configurations {
 
 // remove unnecessary transitive dependencies (eg tomcat)
 dependencies {
-	compile 'com.fasterxml.jackson.core:jackson-databind:2.5.1'
+    compile 'ch.qos.logback:logback-classic:1.1.2'
+    compile 'org.slf4j:log4j-over-slf4j:1.7.10'
+
+    compile("org.glassfish.jersey.containers:jersey-container-servlet:2.13")
+    compile("org.glassfish.jersey.media:jersey-media-json-jackson:2.13")
+    compile('org.glassfish.jersey.media:jersey-media-multipart:2.15')
+
+    compile("com.fasterxml.jackson.core:jackson-annotations:2.4.1")
+    compile("com.fasterxml.jackson.core:jackson-databind:2.4.1")
+    compile("com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:2.4.1")
+
+    compile("org.apache.tomcat.embed:tomcat-embed-core:8.0.18")
+    compile('org.apache.tomcat.embed:tomcat-embed-logging-log4j:8.0.18')
+    compile('org.apache.tomcat.embed:tomcat-embed-jasper:8.0.18')
+    compile('org.apache.tomcat.embed:tomcat-embed-el:8.0.18')
+
 	compile 'com.geteventstore:eventstore-client_2.11:2.0.0'
 	compile 'com.netflix.hystrix:hystrix-core:1.4.0'
-  testCompile("junit:junit-dep:4.11")
+
+	testCompile("junit:junit-dep:4.11")
 }
 
 eclipse {

@@ -9,7 +9,7 @@ import org.junit.Test;
 
 import com.jayway.es.api.Event;
 import com.jayway.es.store.EventStream;
-import com.jayway.rps.event.GameTiedEvent;
+import com.jayway.rps.domain.event.GameTiedEvent;
 
 public class InMemoryEventStoreTest {
 	UUID gameId = UUID.randomUUID();

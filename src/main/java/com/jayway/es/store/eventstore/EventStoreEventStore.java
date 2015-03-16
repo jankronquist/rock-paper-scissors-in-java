@@ -7,6 +7,7 @@ import akka.actor.Status;
 import akka.actor.UntypedActor;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.es.api.Event;
@@ -14,10 +15,12 @@ import com.jayway.es.impl.Sneak;
 import com.jayway.es.store.EventStore;
 import com.jayway.es.store.EventStream;
 import com.jayway.es.store.ListEventStream;
-import com.jayway.rps.event.GameCreatedEvent;
+import com.jayway.rps.domain.event.GameCreatedEvent;
+
 import eventstore.EsException;
 import eventstore.EventData;
 import eventstore.ReadStreamEventsCompleted;
+import eventstore.StreamNotFoundException;
 import eventstore.WriteEventsCompleted;
 import eventstore.j.EsConnection;
 import eventstore.j.EsConnectionFactory;
@@ -30,6 +33,7 @@ import scala.concurrent.duration.Duration;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -78,6 +82,8 @@ public class EventStoreEventStore implements EventStore<Long> {
                 events.add(mapper.readValue(json, type));
             }
             return new ListEventStream(result.lastEventNumber().value(), events);
+	    } catch (StreamNotFoundException e) {
+            return new ListEventStream(-1, Collections.emptyList());
         } catch (Exception e) {
             throw Sneak.sneakyThrow(e);
         }
@@ -89,7 +95,7 @@ public class EventStoreEventStore implements EventStore<Long> {
 	    for (Event event : events) {
 	        builder = builder.addEvent(toEventData(event));
         }
-	    if (version > 0) {
+	    if (version >= 0) {
 	        builder = builder.expectVersion((int) version);
 	    } else {
 	        builder = builder.expectNoStream();

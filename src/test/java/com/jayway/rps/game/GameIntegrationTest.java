@@ -10,11 +10,12 @@ import com.jayway.es.api.Event;
 import com.jayway.es.impl.ApplicationService;
 import com.jayway.es.store.EventStream;
 import com.jayway.es.store.memory.InMemoryEventStore;
-import com.jayway.rps.Move;
-import com.jayway.rps.command.CreateGameCommand;
-import com.jayway.rps.command.MakeMoveCommand;
-import com.jayway.rps.event.GameTiedEvent;
-import com.jayway.rps.event.GameWonEvent;
+import com.jayway.rps.domain.Move;
+import com.jayway.rps.domain.command.CreateGameCommand;
+import com.jayway.rps.domain.command.MakeMoveCommand;
+import com.jayway.rps.domain.event.GameTiedEvent;
+import com.jayway.rps.domain.event.GameWonEvent;
+import com.jayway.rps.domain.game.Game;
 
 public class GameIntegrationTest {
 	InMemoryEventStore eventStore = new InMemoryEventStore();
