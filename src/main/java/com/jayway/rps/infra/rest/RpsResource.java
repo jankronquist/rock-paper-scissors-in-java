@@ -8,6 +8,8 @@ import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
@@ -15,13 +17,17 @@ import com.jayway.es.impl.ApplicationService;
 import com.jayway.rps.domain.Move;
 import com.jayway.rps.domain.command.CreateGameCommand;
 import com.jayway.rps.domain.command.MakeMoveCommand;
+import com.jayway.rps.domain.game.GamesProjection;
+import com.jayway.rps.domain.game.GamesProjection.GameState;
 
 @Path("games")
 public class RpsResource {
     private ApplicationService applicationService;
+	private GamesProjection gamesProjection;
 
-	public RpsResource(ApplicationService applicationService) {
+	public RpsResource(ApplicationService applicationService, GamesProjection gamesProjection) {
 		this.applicationService = applicationService;
+		this.gamesProjection = gamesProjection;
 	}
 
 	@POST
@@ -33,10 +39,20 @@ public class RpsResource {
 
 	@GET
 	@Path("{gameId}")
+	@Produces(MediaType.APPLICATION_JSON)
     public GameDTO game(
-    		@PathParam("gameId") String gameId, 
-    		@HeaderParam("SimpleIdentity") String email) throws Exception {
-		return null;
+    		@PathParam("gameId") String gameId) throws Exception {
+		GameState gameState = gamesProjection.get(UUID.fromString(gameId));
+		GameDTO dto = new GameDTO();
+		dto.gameId = gameState.gameId.toString();
+		dto.createdBy = gameState.createdBy;
+		dto.state = gameState.state.toString();
+		if (gameState.state.completed) {
+			dto.winner = gameState.winner;
+			dto.loser = gameState.loser;
+			dto.moves = gameState.moves;
+		}
+		return dto;
     }
 
 	@POST

@@ -8,9 +8,10 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.jayway.es.impl.ApplicationService;
-import com.jayway.es.store.EventStore;
+import com.jayway.es.impl.ReflectionUtil;
 import com.jayway.es.store.eventstore.EventStoreEventStore;
 import com.jayway.rps.domain.game.Game;
+import com.jayway.rps.domain.game.GamesProjection;
 import com.jayway.rps.infra.rest.HandleAllExceptions;
 import com.jayway.rps.infra.rest.RpsResource;
 
@@ -24,10 +25,12 @@ public class RpsConfig extends ResourceConfig {
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         mapper.configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false);
         
-        EventStore eventStore = new EventStoreEventStore("game", mapper);
+		GamesProjection gameProjection = new GamesProjection();
+        EventStoreEventStore eventStore = new EventStoreEventStore("game", mapper);
 		ApplicationService applicationService = new ApplicationService(eventStore, Game.class);
+		eventStore.all().collect(()-> gameProjection, ReflectionUtil::invokeHandleMethod);
         
-        register(new RpsResource(applicationService));
+        register(new RpsResource(applicationService, gameProjection));
         register(new HandleAllExceptions());
     }
 }

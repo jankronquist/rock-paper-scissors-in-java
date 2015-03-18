@@ -2,13 +2,14 @@ package com.jayway.es.store.memory;
 
 import java.util.Collections;
 import java.util.ConcurrentModificationException;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+
+import rx.Observable;
 
 import com.jayway.es.api.Event;
 import com.jayway.es.store.EventStore;
@@ -30,7 +31,7 @@ public class InMemoryEventStore implements EventStore<Long> {
 	}
 
 	@Override
-	public void store(UUID aggregateId, long version, List<? extends Event> events) {
+	public void store(UUID aggregateId, long version, List<Event> events) {
 		ListEventStream stream = loadEventStream(aggregateId);
 		if (stream.version() != version) {
 			throw new ConcurrentModificationException("Stream has already been modified");
@@ -53,6 +54,11 @@ public class InMemoryEventStore implements EventStore<Long> {
 			}
 		}
 		return new ListEventStream(now-1, events);
+	}
+
+	@Override
+	public Observable<Event> all() {
+		throw new UnsupportedOperationException();
 	}
 	
 }
